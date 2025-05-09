@@ -1,0 +1,27 @@
+{
+  "workFlow": "payment",
+  "steps": [
+    { "order":"1","activity": "inventory", "endpoint": "http://localhost:8081/inventory/api/v1/reserve","httpMethod":"POST","payLoad":"{  \"inventoryId\": \"101\"  }","retryCount":1,
+        "retryMaxInterval":10,"retryInitialInterval":1,"retryPolicyBackOff":1,"startToCloseTimeout":1
+   
+    },
+    { "order":"2","activity": "paymentDetails", "endpoint": "http://localhost:8082/pmt/api/v1/deposit" ,"httpMethod":"POST","payLoad":"{\"amount\": 100.0    }","retryCount":5,
+     "retryMaxInterval":10,"retryInitialInterval":1,"retryPolicyBackOff":2,"startToCloseTimeout":1,
+   "compensationStep": {
+        "activity": "releaseInventory",
+        "endpoint": "http://localhost:8081/inventory/api/v1/release",
+        "httpMethod": "POST",
+        "retryCount":1,
+         "retryMaxInterval":10,"retryInitialInterval":1,"retryPolicyBackOff":1,"startToCloseTimeout":1,
+        "payLoad": "{\"inventoryId\":\"101\"}"
+      }
+    }
+   
+  ]
+  
+
+}
+
+
+
+
